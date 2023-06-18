@@ -1,0 +1,10 @@
+body {
+  background-color: gray;
+}
+
+h1 {
+  background-color: red;
+  height: 90%;
+  color: black;
+  font-size: 100px;
+}
