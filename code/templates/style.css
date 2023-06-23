@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Bowlby+One+SC');
+
 body {
   background-color: gray;
 }
 
 h1 {
   background-color: red;
-  height: 90%;
   color: black;
-  font-size: 100px;
+  text-align: center;
+  font-family: 'Bowlby One SC', cursive;
 }
