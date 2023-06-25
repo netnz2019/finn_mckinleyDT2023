@@ -5,12 +5,6 @@ app = Flask(__name__)
 def root():
   return render_template('home.html', page_title="Home")
 
-@app.route('/about')    # Route to About Page
-def about():
-    return render_template('about.html', page_title='ABOUT')
-
-
-
 
 if __name__ == "__main__":    # Starts App
     app.run(debug=True, host="0.0.0.0", port=8080)
