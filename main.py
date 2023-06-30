@@ -95,6 +95,14 @@ app = Flask(__name__)
 def root():
   return render_template('home.html', page_title="Home")
 
+@app.route('/teams')
+def teams():
+  Session = sessionmaker(bind=engine)
+  session = Session()
+  results=session.query(Team).all() 
+  print("\n\nTeams are:\n")
+  print(results)
+  return render_template("teams.html", page_title="TEAMS", query_results = results)
 
 if __name__ == "__main__":    # Starts App
     app.run(debug=True, host="0.0.0.0", port=8080)
