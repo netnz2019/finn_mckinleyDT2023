@@ -51,7 +51,7 @@ class Team(Base):
 
 
   def __repr__(self):
-    return f"({self.rank}), {self.name} ({self.wins // self.losses}, {self.points}, {self.points // self.games_played})"
+    return f"({self.rank}), {self.name} ({self.wins} / {self.losses}, {self.points}, {self.points // self.games_played})"
 
 #========== Database ==========
 db_url = "sqlite:///mydb.db"
@@ -95,7 +95,7 @@ app = Flask(__name__)
 def root():
   return render_template('home.html', page_title="Home")
 
-@app.route('/teams')
+@app.route('/teams')    # Route to Team Page
 def teams():
   Session = sessionmaker(bind=engine)
   session = Session()
