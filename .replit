@@ -21,7 +21,7 @@ channel = "stable-22_11"
     "--ps1",
     "\u0001\u001b[33m\u0002\u0001\u001b[00m\u0002 ",
     "-i",
-    "python3 main.py"
+    "main.py"
   ]
   env = { LD_LIBRARY_PATH = "$PYTHON_LD_LIBRARY_PATH" }
 
