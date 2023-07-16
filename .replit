@@ -104,3 +104,8 @@ start = "pylsp"
 
 [deployment]
 run = ["sh", "-c", "python3 main.py"]
+
+[interpreter]
+command = [
+  "python3 main.py"
+]
