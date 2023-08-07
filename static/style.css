@@ -7,12 +7,25 @@ body {
 h1 {
   color: black; 
   font-size: 3vw; 
-  text-align: center; 
-  top: 50%; 
-  transform: translate(0, 20%);
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  transform: translate(5vw, -8vh);
 }
 
 h2 {
+  color: red; 
+  font-size: 3vw;
+  float: left;
+  padding-left: 5vw;
+}
+
+h3 {
+  position: absolute;
+}
+
+h4 {
   background-color: pink;
   text-align: center;
 }
@@ -32,4 +45,46 @@ h2 {
   margin-right: 2%; 
   top: 50%; 
   transform: translate(0, 10%);
+  float: left;
+}
+
+.links {
+  float: left;
+  color: red;
+  transform: translate(0, -3vh);
+}
+
+a:link {
+  text-decoration: none;
+  color: black;
+}
+
+a:visited {
+  text-decoration: none;
+  color: black;
+}
+
+a:hover {
+  text-decoration: none;
+  color: black;
+}
+
+a:active {
+  text-decoration: none;
+  color: black;
+}
+
+.subheading {
+  display: block; 
+  font-size: 2em; 
+  margin-top: 0.67em; 
+  margin-bottom: 0.67em; 
+  margin-left: 0; 
+  margin-right: 0; 
+  font-weight: bold;
+  display: flex;
+  justify-content: left;
+  position: relative;
+  top: 0;
+  transform: translate(0, 0);
 }

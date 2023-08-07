@@ -1,12 +1,17 @@
 {% extends 'layout.html' %}
 {% block content %}
+<body>
 
-<h1>Teams</h1>
+<div>
+  <h1 class="subheading" style="color:#D9D9D9;">.</h1>
+  <h1 class="subheading" style="">Players</h1>
+  
+  {% for result in query_results %}    <!-- Jinja Result Loop -->
+    <p class="result" style="">{{ result}}</p>
+  {% endfor %}
+</div>
 
+</body>
 
-{% for result in query_results %}    <!-- Jinja Result Loop -->
-  <li>{{ result}}</li>
-        
-{% endfor %}
 
 {% endblock %}
