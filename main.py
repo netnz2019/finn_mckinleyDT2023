@@ -180,6 +180,19 @@ def players():
   print(results)
   return render_template("players.html", page_title="PLAYERS", query_results = results)
 
+#This route is where the SSN of the person to be edited is entered. It uses a redirect with the ssn as a parameter
+#to create a custom URL the SSN is passed to the update page. This creates a page /update/<SSN>
+#that contains the details of the person to edit
+@app.route('/edit_player', methods=['POST', 'GET'])  # note the leading slash, it’s important
+def edit_player():
+  if request.method == "POST":
+    uid = request.form.get("uid")
+    print("uid requested is - from edit method - " + uid)
+    return redirect(url_for('update', ids = uid))
+    
+  else:
+    print("did not redirect")
+    return render_template("edit_player.html",page_title='EDIT A PLAYER')
 
 @app.route('/update/<ids>', methods=['POST', 'GET'])
 #Update is used to update a database entry or delete a database entry. A custom page is created on the fly
