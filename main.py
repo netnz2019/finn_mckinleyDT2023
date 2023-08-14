@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from flask import request, redirect, url_for
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer,CHAR, update
+from sqlalchemy import create_engine, ForeignKey, Column, String, Integer,CHAR
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils.functions import database_exists
@@ -179,6 +179,56 @@ def players():
   print("\n\nPlayers are:\n")
   print(results)
   return render_template("players.html", page_title="PLAYERS", query_results = results)
+
+
+@app.route('/update/<ids>', methods=['POST', 'GET'])
+#Update is used to update a database entry or delete a database entry. A custom page is created on the fly
+#for a person when the SSN is passed from edit_person().
+#First the person details are got as an object from the DB using SQLalchemy - create a person object.
+#Next, (last line of this function) the update page is rendered by passing fname, lname etc to update.html
+#If values are edited, they are saved by e.g. person.firstname = request.form['fname'] - which gets
+#the edited value from the form and sets a person attribute. The session is commited and a redirect to 'people'
+#so that you can see the edit
+#If delete is pressed, the person object is deleted using session.delete(person)
+def update(ids):
+  print(ids)
+  Base.metadata.create_all(bind=engine)
+  Session = sessionmaker(bind=engine)
+  session = Session()
+  # getting input with ssn = ssn in HTML form
+  uid = ids
+  print("uid requested is ... " + uid)
+  uid = int(uid)
+  
+  player = session.query(Player).filter(Player.uid == uid).first()
+  fname = player.get_firstname()
+  print(fname) #Check getter method works
+  lname = player.get_lastname()
+  points = player.get_points()
+
+  if request.method == 'POST': #Check which button is clicked
+    
+    if request.form['edit_button'] =="Save": #Save pressed, so update the details. request.form['edit_button'] checks the value of the button.
+      print("Save clicked - update")
+      player.firstname = request.form['fname']# Get the fanme from the form and set it. In SQLalchemy we can directly edit an objects attributes!
+      print( "Got the first name")
+      player.lastname = request.form['lname']
+      print( "Last Name is " + lname)      
+      #person.ssn = request.form['int'] ssn is a primary key - do not change
+      player.points = int(request.form['points'])
+      session.commit()
+      return redirect(url_for('people', page_title="PEOPLE"))   
+      
+    elif request.form['edit_button'] =="Delete":# Delete so delete the player
+      print("Delete clicked  -update")
+      session.delete(player)
+      session.commit()
+      print("deleted person with id " + ids)
+      return redirect(url_for('people', page_title="PEOPLE"))
+      
+  print("sending variables from update")
+  #Return statement below is run the first time the page is loaded.
+  return render_template("update.html",page_title='UPDATE A PERSON', ids=uid, Fname = fname, Lname = lname, Points = points)
 
 if __name__ == "__main__":    # Starts App
     app.run(debug=True, host="0.0.0.0", port=8080)
