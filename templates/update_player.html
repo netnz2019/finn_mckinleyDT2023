@@ -1,25 +1,18 @@
 {% extends 'layout.html' %}
 {% block content %}
-
-<h1 style="color:green;">Edit a person {{ ids }}</h1>
+</br></br>
 
 <p>Edit the details and save or delete the entry.</p>
 
 <!-- send any from button to update/{{ids}} -->
-<form action="/update/{{ids}}" method="post"> 
+<form action="/update_player/{{ids}}" method="post"> 
 
 
 <label for="uid">UID:</label>
- 
-<input type="text" id="uid" name="uid" value="{{ids}}"> 
-  </br>
+<input type="text" id="uid" name="uid" placeholder="UID" value="{{ids}}"> </br>
+  
 <label for="firstname">First Name:</label>
- {% if Fname|length %} <!-- You can use if statements in Jinga to control the appearance of your page depending upon the parameters passed -->
-<input type="text" id="firstname" name="fname" placeholder="firstname" value = "{{Fname}}">
- {% else %} 
-<input type="text" id="firstname" name="fname" placeholder="firstname">
- {% endif %} 
-</br>
+<input type="text" id="firstname" name="fname" placeholder="firstname" value = "{{Fname}}"> </br>
 
 <label for="lastname">Last Name:</label>
 <input type="text" id="lastname" name="lname" placeholder="lastname" value={{Lname}}></br>

@@ -3,9 +3,10 @@
 <body>
 
 <div>
-  <h1 class="subheading" style="color:#D9D9D9;">.</h1>
+  </br></br>
   <h1 class="subheading" style="">Players</h1>
-  
+
+  <p>(ID, Team ID) #Number - Name (Wins / Losses) (Points / Games)</p>
   {% for result in query_results %}    <!-- Jinja Result Loop -->
     <p class="result" style="">{{ result}}</p>
   {% endfor %}

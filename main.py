@@ -7,7 +7,7 @@ from sqlalchemy_utils.functions import database_exists
 
 Base = declarative_base()
 
-#========== Team Class ==========
+#====================== Team ======================
 class Team(Base):
   __tablename__ = "teams"
 
@@ -18,8 +18,9 @@ class Team(Base):
   games_played = Column("games_played", Integer)
   wins = Column("wins", Integer)
   losses = Column("losses", Integer)
+  gender = Column("gender", CHAR)
 
-  def __init__(self, uid, name, rank, points, games_played, wins, losses):
+  def __init__(self, uid, name, rank, points, games_played, wins, losses, gender):
     self.uid = uid
     self.name = name
     self.rank = rank
@@ -27,6 +28,7 @@ class Team(Base):
     self.games_played = games_played
     self.wins = wins
     self.losses = losses
+    self.gender = gender
 
   def get_uid(self):
     return self.uid
@@ -49,9 +51,13 @@ class Team(Base):
   def get_losses(self):
     return self.losses
 
+  def get_gender(self):
+    return self.gender
+  
   def __repr__(self):
-    return f"({self.rank}), {self.name} ({self.wins} / {self.losses}, {self.points}, {self.points // self.games_played})"
+    return f"({self.uid}) #{self.rank} {self.name} ({self.points} / {self.games_played}) - ({self.wins} / {self.games_played - (self.wins + self.losses)} / {self.losses}) {self.gender}"
 
+#====================== Player ======================
 class Player(Base):
   __tablename__ = "players"
 
@@ -61,18 +67,18 @@ class Player(Base):
   team = Column(Integer, ForeignKey("teams.uid"))    # ** Check this later
 
   # These could be ForeignKeys, but if a player is not playing for any reason this will affect their stats even though they never played
-  rank = Column("rank", Integer)
+  number = Column("number", Integer)
   points = Column("points", Integer)
   games_played = Column("games_played", Integer)
   wins = Column("wins", Integer)
   losses = Column("losses", Integer)
 
-  def __init__(self, uid, firstname, lastname, team, rank, points, games_played, wins, losses):
+  def __init__(self, uid, firstname, lastname, team, number, points, games_played, wins, losses):
     self.uid = uid
     self.firstname = firstname
     self.lastname = lastname
     self.team = team
-    self.rank = rank
+    self.number = number
     self.points = points
     self.games_played = games_played
     self.wins = wins
@@ -90,8 +96,8 @@ class Player(Base):
   def get_team(self):
     return self.team
 
-  def get_rank(self):
-    return self.rank
+  def get_number(self):
+    return self.number
 
   def get_points(self):
     return self.points
@@ -106,9 +112,9 @@ class Player(Base):
     return self.losses
 
   def __repr__(self):
-    return f"({self.uid}, {self.team}), {self.firstname} {self.lastname} ({self.wins} / {self.losses}, {self.points}, {self.points // self.games_played})"
+    return f"({self.uid}, {self.team})   #{self.number} - {self.firstname} {self.lastname} ({self.wins} / {self.losses}) ({self.points} / {self.games_played})"
   
-#========== Database ==========
+#====================== Database ======================
 db_url = "sqlite:///mydb.db"
 engine = create_engine(db_url, echo=True)
 
@@ -129,11 +135,11 @@ else:    # Database does not exist
   session = Session()
   
   # Adds Teams
-  t1 = Team(1, "School Boys", 1, 210, 4, 3, 1)
-  t2 = Team(2, "Young Ballerz", 2, 180, 4, 2, 2)
-  t3 = Team(3, "Fire Hunters", 3, 175, 4, 2, 2)
-  t4 = Team(4, "Benmore Rams", 5, 50, 4, 0, 4)
-  t5 = Team(5, "Alpine Salmon", 4, 105, 4, 1, 3)
+  t1 = Team(1, "School Boys", 1, 210, 4, 3, 1, "M")
+  t2 = Team(2, "Young Ballerz", 2, 180, 4, 2, 2, "M")
+  t3 = Team(3, "Fire Hunters", 3, 175, 4, 2, 2, "M")
+  t4 = Team(4, "Benmore Rams", 5, 50, 4, 0, 4, "M")
+  t5 = Team(5, "Alpine Salmon", 4, 105, 4, 1, 3, "M")
 
   session.add(t1)
   session.add(t2)
@@ -155,13 +161,14 @@ else:    # Database does not exist
   print("SUCCESS database created and data added")
   
 
-#========== Flask ==========
+#====================== Flask ======================
 app = Flask(__name__) 
 
 @app.route('/')    # Route to Homepage
 def root():
   return render_template('home.html', page_title="Home")
 
+#====================== Teams ======================
 @app.route('/teams')    # Route to Team Page
 def teams():
   Session = sessionmaker(bind=engine)
@@ -171,6 +178,7 @@ def teams():
   print(results)
   return render_template("teams.html", page_title="TEAMS", query_results = results)
 
+#====================== Players ======================
 @app.route('/players')    # Route to Players Page
 def players():
   Session = sessionmaker(bind=engine)
@@ -180,35 +188,115 @@ def players():
   print(results)
   return render_template("players.html", page_title="PLAYERS", query_results = results)
 
-#This route is where the SSN of the person to be edited is entered. It uses a redirect with the ssn as a parameter
-#to create a custom URL the SSN is passed to the update page. This creates a page /update/<SSN>
-#that contains the details of the person to edit
-@app.route('/edit_player', methods=['POST', 'GET'])  # note the leading slash, it’s important
+#====================== Add Player ======================
+@app.route('/add_player', methods=['POST', 'GET'])    # Route to Add Player Page
+def add_player():
+  if request.method == "POST":
+    # Getting input with name = fname in HTML form
+    uid = request.form.get("uid")
+    first_name = request.form.get("fname")
+    last_name = request.form.get("lname")
+    team = request.form.get("team")
+    number = request.form.get("number")
+    points = request.form.get("points")
+    games_played = request.form.get("games")
+    wins = request.form.get("wins")
+    losses = request.form.get("losses")
+       
+    # Create a new connection and session
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    # Converts data to int from txt
+    uid = int(uid)
+    points = int(points)
+    games_played = int(games_played)
+    wins = int(wins)
+    losses = int(losses)
+    
+    #Create a person object
+    p = Player(uid, first_name, last_name, team, number, points, games_played, wins, losses)
+    #Add to the database
+    session.add(p)
+    print("Player added" + str(uid))
+    session.commit() 
+  return render_template("add_player.html")
+
+#====================== Add Team ======================
+@app.route('/add_team', methods=['POST', 'GET'])    # Route to Add Player Page
+def add_team():
+  if request.method == "POST":
+    # Getting input with name = fname in HTML form
+    uid = request.form.get("uid")
+    name = request.form.get("name")
+    rank = request.form.get("rank")
+    points = request.form.get("points")
+    games_played = request.form.get("games_played")
+    wins = request.form.get("wins")
+    losses = request.form.get("losses")
+    gender = request.form.get("gender")
+    
+    # Create a new connection and session
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    
+    # Converts data to int from txt
+    uid = int(uid)
+    rank = int(rank)
+    points = int(points)
+    games_played = int(games_played)
+    wins = int(wins)
+    losses = int(losses)
+    gender = (gender)
+    
+    #Create a team object
+    t = Team(uid, name, rank, points, games_played, wins, losses, gender)
+    #Add to the database
+    session.add(t)
+    print("Team added" + str(uid))
+    session.commit() 
+  return render_template("add_team.html")
+
+#====================== Edit Player ======================
+@app.route('/edit_player', methods=['POST', 'GET'])    # Route to edit page
 def edit_player():
   if request.method == "POST":
-    uid = request.form.get("uid")
-    print("uid requested is - from edit method - " + uid)
-    return redirect(url_for('update', ids = uid))
-    
+    if request.form['edit_button'] =="search":
+      uid = request.form.get("uid")
+      print("uid requested is - from edit method - " + uid)
+      return redirect(url_for('update_player', ids = uid))
+    elif request.form['edit_button'] =="add":
+      return redirect(url_for('add_player'))
   else:
     print("did not redirect")
-    return render_template("edit_player.html",page_title='EDIT A PLAYER')
+    return render_template("edit.html",page_title='EDIT A PLAYER')
 
-@app.route('/update/<ids>', methods=['POST', 'GET'])
-#Update is used to update a database entry or delete a database entry. A custom page is created on the fly
-#for a person when the SSN is passed from edit_person().
-#First the person details are got as an object from the DB using SQLalchemy - create a person object.
-#Next, (last line of this function) the update page is rendered by passing fname, lname etc to update.html
-#If values are edited, they are saved by e.g. person.firstname = request.form['fname'] - which gets
-#the edited value from the form and sets a person attribute. The session is commited and a redirect to 'people'
-#so that you can see the edit
-#If delete is pressed, the person object is deleted using session.delete(person)
-def update(ids):
+#====================== Edit Team ======================
+@app.route('/edit_team', methods=['POST', 'GET'])    # Route to edit page
+def edit_team():
+  if request.method == "POST":
+    if request.form['edit_button'] =="search":
+      name = request.form.get("name")
+      print("name requested is - from edit method - " + name)
+      Base.metadata.create_all(bind=engine)
+      Session = sessionmaker(bind=engine)
+      session = Session()
+      team = session.query(Team).filter(Team.name == name).first()
+      return redirect(url_for('update_team', ids = team.uid))
+    elif request.form['edit_button'] =="add":
+      return redirect(url_for('add_team'))
+  else:
+    print("did not redirect")
+    return render_template("edit.html",page_title='EDIT TEAM')
+
+#====================== Update Player ======================
+@app.route('/update_player/<ids>', methods=['POST', 'GET'])    # Route to Upade Player
+def update_player(ids):
   print(ids)
   Base.metadata.create_all(bind=engine)
   Session = sessionmaker(bind=engine)
   session = Session()
-  # getting input with ssn = ssn in HTML form
   uid = ids
   print("uid requested is ... " + uid)
   uid = int(uid)
@@ -230,18 +318,73 @@ def update(ids):
       #person.ssn = request.form['int'] ssn is a primary key - do not change
       player.points = int(request.form['points'])
       session.commit()
-      return redirect(url_for('people', page_title="PEOPLE"))   
+      return redirect(url_for('players', page_title="PLAYERS"))   
       
     elif request.form['edit_button'] =="Delete":# Delete so delete the player
       print("Delete clicked  -update")
       session.delete(player)
       session.commit()
       print("deleted person with id " + ids)
-      return redirect(url_for('people', page_title="PEOPLE"))
+      return redirect(url_for('players', page_title="PLAYERS"))
       
   print("sending variables from update")
   #Return statement below is run the first time the page is loaded.
-  return render_template("update.html",page_title='UPDATE A PERSON', ids=uid, Fname = fname, Lname = lname, Points = points)
+  return render_template("update_player.html",page_title='UPDATE A PERSON', ids=uid, Fname = fname, Lname = lname, Points = points)
+
+#====================== Update Team ======================
+@app.route('/update_team/<ids>', methods=['POST', 'GET'])    # Route to update Team
+def update_team(ids):
+  print(ids)
+  Base.metadata.create_all(bind=engine)
+  Session = sessionmaker(bind=engine)
+  session = Session()
+  uid = ids
+  
+  team = session.query(Team).filter(Team.uid == uid).first()
+  name = team.name
+  print("name requested is ... " + name)
+  
+  rank = team.rank
+  points = team.points
+  print(points) # Check method works
+  games_played = team.games_played
+  wins = team.wins
+  losses = team.losses
+  gender = team.gender
+  
+
+  if request.method == 'POST': #Check which button is clicked
+    if request.form['edit_button'] == "Save": #Save pressed, so update the details. request.form['edit_button'] checks the value of the button.
+      print("Save clicked - update")
+      team.uid = request.form['uid']
+      print("UID is" + uid)
+      team.name = request.form['name']
+      print("Name is" + name)
+      team.rank = int(request.form['rank'])
+      print("Rank is" + str(rank))
+      team.points = int(request.form['points'])
+      print("Points is " + str(points))      
+      team.games_played = int(request.form['games_played'])
+      print("Games played is" + str(games_played))
+      team.wins = int(request.form['wins'])
+      print("Wins is" + str(wins))
+      team.losses = int(request.form['losses'])
+      print("Losses is" + str(losses))
+      team.gender = request.form['gender']
+      print("Gender is" + gender)
+      session.commit()
+      return redirect(url_for('teams', page_title="TEAMS "))   
+      
+    elif request.form['edit_button'] =="Delete":# Delete so delete the player
+      print("Delete clicked  -update")
+      session.delete(team)
+      session.commit()
+      print("deleted team with name " + name)
+      return redirect(url_for('teams', page_title="TEAMS"))
+      
+  print("sending variables from update")
+  #Return statement below is run the first time the page is loaded.
+  return render_template("update_team.html",page_title='UPDATE A TEAM', ids=uid, name = name, rank = rank, points = points, games_played = games_played, wins = wins, losses = losses, gender = gender)
 
 if __name__ == "__main__":    # Starts App
     app.run(debug=True, host="0.0.0.0", port=8080)
