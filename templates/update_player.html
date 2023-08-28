@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% block content %}
+</br></br>
+
+<p>Edit the details and save or delete the entry.</p>
+
+<!-- send any from button to update/{{ids}} -->
+<form action="/update_player/{{ids}}" method="post"> 
+
+
+<label for="uid">UID:</label>
+<input type="text" id="uid" name="uid" placeholder="UID" value="{{ids}}"> </br>
+  
+<label for="firstname">First Name:</label>
+<input type="text" id="firstname" name="fname" placeholder="firstname" value = "{{Fname}}"> </br>
+
+<label for="lastname">Last Name:</label>
+<input type="text" id="lastname" name="lname" placeholder="lastname" value={{Lname}}></br>
+
+<label for="points">Points:</label>
+<input type="text" id="points" name="points" placeholder="points" value={{Points}}>  </br></br>
+
+  <!-- Note both buttons have the same name, but different values. This is used in the update method - so we can tell which button was pressed! -->
+<button type="submit" name="edit_button" value="Save">Save</button></br>
+ 
+<p> Warning - deleting a person cannot be undone!</p>
+<button type="submit" name="edit_button" value="Delete">Delete</button></br>
+</form> 
+ {% endblock %}

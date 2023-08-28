@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+{% block content %}
+</br></br>
+
+<p>Edit the details and save or delete the entry.</p>
+
+<!-- send any from button to update/{{ids}} -->
+<form action="/update_team/{{ids}}" method="post"> 
+
+
+<label for="uid">UID:</label>
+<input type="text" id="uid" name="uid" value="{{ids}}"> 
+  </br>
+  
+<label for="name">Name:</label>
+<input type="text" id="name" name="name" placeholder="name" value ="{{name}}">
+  </br>
+
+<labe for="rank">Rank:</label>
+<input type="text" id="rank" name="rank" placeholder="rank" value={{rank}}> </br>
+  
+<label for="points">Points:</label>
+<input type="text" id="points" name="points" placeholder="points" value={{points}}> </br>
+
+<label for="games_played">Games:</label>
+<input type="text" id="games_played" name="games_played" placeholder="games" value={{games_played}}> </br>
+
+<label for="wins">Wins:</label>
+<input type="text" id="wins" name="wins" placeholder="wins" value={{wins}}> </br>
+
+<label for="losses">Losses:</label>
+<input type="text" id="losses" name="losses" placeholder="losses" value={{losses}}> </br>
+
+<label for="gender">Gender:</label>
+<input type="text" id="gender" name="gender" placeholder="gender" value={{gender}}> </br>
+
+  
+  <!-- Note both buttons have the same name, but different values. This is used in the update method - so we can tell which button was pressed! -->
+<button type="submit" name="edit_button" value="Save">Save</button></br>
+ 
+<p> Warning - deleting a person cannot be undone!</p>
+<button type="submit" name="edit_button" value="Delete">Delete</button></br>
+</form> 
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+{% block content %}
+</br></br>
+
+<p>Add a Team</p>
+<form action="{{ url_for("add_team")}}" method="post">
+
+<label for="uid">UID:</label>
+<input type="text" id="uid" name="uid" placeholder="a number"></br>
+
+<label for="name">Name:</label>
+<input type="text" id="name" name="name" placeholder="name"></br>
+  
+<label for="rank">Rank:</label>
+<input type="text" id="rank" name="rank" placeholder="a number"></br>
+  
+<label for="points">Points:</label>
+<input type="text" id="points" name="points" placeholder="a number"></br>
+  
+<label for="games_played">Games Played:</label>
+<input type="text" id="games_played" name="games_played" placeholder="a number"></br>
+  
+<label for="wins">Wins:</label>
+<input type="text" id="wins" name="wins" placeholder="a number"></br>
+  
+<label for="losses">Losses:</label>
+<input type="text" id="losses" name="losses" placeholder="a number"></br>
+  
+<label for="gender">Gender:</label>
+<input type="text" id="gender" name="gender" placeholder="M/F"></br>
+
+</br>
+<button type="submit">Login</button></br>
+</form>
+{% endblock %}
