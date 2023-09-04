@@ -261,39 +261,55 @@ def add_team():
 #====================== Edit Player ======================
 @app.route('/edit_player', methods=['POST', 'GET'])    # Route to edit page
 def edit_player():
+  # Get Players
+  Session = sessionmaker(bind=engine)
+  session = Session()
+  playerlist = session.query(Player).all() 
+
+  print("\n\nPlayers are:\n")
+  for i in playerlist:
+    print(i.uid, i.firstname, i.lastname)
+
+  # Get Teams
+  teamlist=session.query(Team).all() 
+
+  print("\n\nTeams are:\n")
+  for i in teamlist:
+    print(i.uid, i.name)
+
+  # Do Stuff
   if request.method == "POST":
     if request.form['edit_button'] =="search":
-      uid = request.form.get("uid")
-      print("uid requested is - from edit method - " + uid)
+      uid = request.form.get("player")
+      print("uid requested is - from edit method - " + str(uid))
       return redirect(url_for('update_player', ids = uid))
     elif request.form['edit_button'] =="add":
       return redirect(url_for('add_player'))
   else:
-    print("did not redirect")
-    return render_template("edit.html",page_title='EDIT A PLAYER')
+    print("Did not redirect") # Debug
+    return render_template("edit.html", page_title='EDIT', playerlist = playerlist, query_results = teamlist)
 
 #====================== Edit Team ======================
 @app.route('/edit_team', methods=['POST', 'GET'])    # Route to edit page
 def edit_team():
   Session = sessionmaker(bind=engine)
   session = Session()
-  results=session.query(Team).all() 
+  teamlist=session.query(Team).all() 
 
   # Debug
   print("\n\nTeams are:\n")
-  for i in results:
+  for i in teamlist:
     print(i.uid, i.name)
 
   if request.method == "POST":
-    print("Post")
     if request.form['edit_button'] == "search":
       uid = request.form.get("team")
       print("\n ID is:", uid, "\n") # Debug
       return redirect(url_for('update_team', ids = uid))
     elif request.form['edit_button'] =="add":
       return redirect(url_for('add_team'))
-  
-  return render_template("edit.html", page_title="EDIT TEAMS", query_results = results)
+  else:
+    return render_template("edit.html", page_title="EDIT TEAMS", query_results = teamlist)
 
 #====================== Update Player ======================
 @app.route('/update_player/<ids>', methods=['POST', 'GET'])    # Route to Upade Player
