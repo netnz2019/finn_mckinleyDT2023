@@ -275,20 +275,25 @@ def edit_player():
 #====================== Edit Team ======================
 @app.route('/edit_team', methods=['POST', 'GET'])    # Route to edit page
 def edit_team():
+  Session = sessionmaker(bind=engine)
+  session = Session()
+  results=session.query(Team).all() 
+
+  # Debug
+  print("\n\nTeams are:\n")
+  for i in results:
+    print(i.uid, i.name)
+
   if request.method == "POST":
-    if request.form['edit_button'] =="search":
-      name = request.form.get("name")
-      print("name requested is - from edit method - " + name)
-      Base.metadata.create_all(bind=engine)
-      Session = sessionmaker(bind=engine)
-      session = Session()
-      team = session.query(Team).filter(Team.name == name).first()
-      return redirect(url_for('update_team', ids = team.uid))
+    print("Post")
+    if request.form['edit_button'] == "search":
+      uid = request.form.get("team")
+      print("\n ID is:", uid, "\n") # Debug
+      return redirect(url_for('update_team', ids = uid))
     elif request.form['edit_button'] =="add":
       return redirect(url_for('add_team'))
-  else:
-    print("did not redirect")
-    return render_template("edit.html",page_title='EDIT TEAM')
+  
+  return render_template("edit.html", page_title="EDIT TEAMS", query_results = results)
 
 #====================== Update Player ======================
 @app.route('/update_player/<ids>', methods=['POST', 'GET'])    # Route to Upade Player
