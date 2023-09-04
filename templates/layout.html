@@ -3,10 +3,10 @@
   <head>
     <meta charset='utf-8'>
     <title>Twizel Basketball - {{ page_title }}</title>
-    <link href="/static/style.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/style.css" rel="stylesheet" type="text/css"/> <!-- Links to stylesheet -->
   </head>
   
-  <body>
+  <body> <!-- Uses Jinja Templates to build page -->
   {% include 'header.html' %}
   {% block content %}{% endblock %}
   {% include 'footer.html' %}

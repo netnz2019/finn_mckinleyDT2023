@@ -4,10 +4,10 @@
 
 <p>Edit the details and save or delete the entry.</p>
 
-<!-- send any from button to update/{{ids}} -->
+<!-- Creates form -->
 <form action="/update_player/{{ids}}" method="post"> 
 
-
+<!-- Displays input boxes -->
 <label for="uid">UID:</label>
 <input type="text" id="uid" name="uid" placeholder="UID" value="{{ids}}"> </br>
   
@@ -20,10 +20,11 @@
 <label for="points">Points:</label>
 <input type="text" id="points" name="points" placeholder="points" value={{Points}}>  </br></br>
 
-  <!-- Note both buttons have the same name, but different values. This is used in the update method - so we can tell which button was pressed! -->
+<!-- Saves changes -->
 <button type="submit" name="edit_button" value="Save">Save</button></br>
- 
-<p> Warning - deleting a person cannot be undone!</p>
+
+<!-- Deletes player -->
+<p> Warning - deleting a player cannot be undone!</p>
 <button type="submit" name="edit_button" value="Delete">Delete</button></br>
 </form> 
  {% endblock %}

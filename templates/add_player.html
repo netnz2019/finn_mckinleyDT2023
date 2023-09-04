@@ -3,8 +3,9 @@
 </br></br>
 
 <p>Add a player</p>
-<form action="{{ url_for("add_player")}}" method="post">
+<form action="{{ url_for("add_player")}}" method="post"> <!-- Creates form -->
 
+<!-- Displays user inputs -->
 <label for="uid">UID:</label>
 <input type="text" id="uid" name="uid" placeholder="a number"> </br>
 
@@ -33,6 +34,6 @@
 <input type="text" id="losses" name="losses" placeholder="player losses"></br>
 
 </br>
-<button type="submit">Login</button></br>
+<button type="submit">Login</button></br> <!-- Saves changes -->
 </form> 
 {% endblock %}
