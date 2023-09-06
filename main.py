@@ -6,7 +6,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils.functions import database_exists
 # Importing Libraries
 
-
 Base = declarative_base()
 
 #====================== Team Class ======================
@@ -174,7 +173,19 @@ app = Flask(__name__) # Loads Flask app
 
 @app.route('/')    # Route to Homepage
 def root():
-  return render_template('home.html', page_title="Home")
+  # Connects to database
+  Session = sessionmaker(bind=engine)
+  session = Session()
+
+  # Gets teams
+  maleteams = session.query(Team).filter(Team.gender == "M")
+  femaleteams = session.query(Team).filter(Team.gender == "F")
+
+  # Gets players
+  maleplayers = session.query(Player).all()
+  
+  
+  return render_template('home.html', page_title="Home", maleteams = maleteams, femaleteams = femaleteams,  maleplayers = maleplayers)
 
 #====================== Teams ======================
 @app.route('/teams')    # Route to Team Page
