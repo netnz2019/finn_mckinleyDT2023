@@ -22,6 +22,10 @@
 <!-- Redirects to update page for selected UID -->
 <button type="submit" name="edit_button" value="search">Search</button></br></br>
 
+{% for x in errors %}
+  <p>{{x}}</p>
+{% endfor %}
+
 <!-- Redirects to add player page -->
 <button type="submit" name="edit_button" value="add">Add Player</button>
 </form>
