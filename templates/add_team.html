@@ -3,9 +3,10 @@
 </br></br>
 
 <p>Add a Team</p>
-<form action="{{ url_for("add_team")}}" method="post"> <!-- Creates form -->
+<!-- Creates form -->
+<form action="{{ url_for("add_team")}}" method="post"> 
 
-<!-- Displays user inputs -->
+<!-- Displays user input boxes -->
 <label for="uid">UID:</label>
 <input type="number" id="uid" name="uid" placeholder="a number"></br>
 
@@ -30,7 +31,8 @@
 <label for="gender">Gender:</label>
 <input type="text" id="gender" name="gender" placeholder="M/F"></br>
 
+<!-- Submit Button -->
 </br>
-<button type="submit">Login</button></br> <!-- Saves changes -->
+<button type="submit">Submit</button></br>
 </form>
 {% endblock %}

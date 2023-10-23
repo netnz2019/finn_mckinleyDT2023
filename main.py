@@ -10,6 +10,7 @@ Base = declarative_base()
 
 #====================== Team Class ======================
 class Team(Base):
+  """ Creates team object with values uid, name, rank, points, games_played, wins, losses, gender """
   __tablename__ = "teams" # Creates SQL Table
 
   # Create Table Columns
@@ -64,6 +65,7 @@ class Team(Base):
 
 #====================== Player ======================
 class Player(Base):
+  """ Creates player object with values uid, firstname, lastname, teamuid, number, points, games_played, wins, losses """
   __tablename__ = "players" # Creates SQL Table
 
   # Create Table Columns
@@ -117,6 +119,7 @@ class Player(Base):
   def get_losses(self):
     return self.losses
 
+  # Returns all of the players data (Getter Method)
   def __repr__(self):
     return f"({self.uid}, {self.team})   #{self.number} - {self.firstname} {self.lastname} ({self.wins} / {self.losses}) ({self.points} / {self.games_played})"
   
@@ -136,6 +139,7 @@ if database_exists(db_url):
     print(i)
 else:    # Database does not exist
   print("database does not exist - so create it and add some data")
+  # Creates database
   Base.metadata.create_all(bind=engine)
 
   Session = sessionmaker(bind=engine)
@@ -169,6 +173,7 @@ else:    # Database does not exist
   
 #====================== Testing ======================
 def testexists(uid, player=0, team=0):
+  """ Tests if player or team exists from given uid """
   print("Testing if exists") # Debug
   if player == 1 and team == 0: # Checks for players
     print("Checking Player") # Debug
@@ -193,6 +198,7 @@ def testexists(uid, player=0, team=0):
     return "Error: Unexpected input in program" # Catches if I did something wrong
 
 def testcreation(uid, player=0, team=0, teamuid=0, games_played=0, wins=0, losses=0):
+  """ Tests if player or team should be created or not from given inputs """
   print("Testing Creation")
   if player == 1 and team == 0:
     try: # Checks for players
@@ -236,9 +242,9 @@ def testcreation(uid, player=0, team=0, teamuid=0, games_played=0, wins=0, losse
     return "Error: unexpected input"
 
 def testTeamUpdate(new_uid, uid, gender, games_played, losses, wins):
-  """ Tests if the updates are valid """
+  """ Tests if the team updates are valid """
   if gender.upper() != "F" and gender.upper() != "M":
-    return "Error: Gender must be F/M"
+    return "Error: Gender must be F or M"
   else:
     if int(new_uid) != int(uid):
       try:
@@ -250,7 +256,7 @@ def testTeamUpdate(new_uid, uid, gender, games_played, losses, wins):
         print("") # Debug
     if games_played < losses + wins: # Checks if match stats makes sense
       print("Unexpected wins / lossess / games played")
-      return "Error: Unexpected wins / lossess / games played"
+      return "Error: Unexpected wins - lossess - games played"
     else: 
       print("No Errors found in testTeamUpdate") # Debug
       return True
@@ -268,7 +274,7 @@ def testPlayerUpdate(new_uid, uid, team, games_played, losses, wins):
       print("") # Debug
   if games_played < losses + wins: # Checks if match stats makes sense
     print("Unexpected wins / lossess / games played")
-    return "Error: Unexpected wins / lossess / games played"
+    return "Error: Unexpected wins - lossess - games played"
   try:
     testingteam = session.query(Team).filter(Team.uid == int(team)).first()
     print("Players team exists", testingteam)
@@ -292,7 +298,7 @@ def teststupidinput(input):
     print("No Errors found") # Debug
     return True
   else:
-    print("No Errors found") # Debug
+    print("No Errors found") # Deb
     return True
     
 #====================== Flask ======================
@@ -356,7 +362,7 @@ def add_player():
     losses = request.form.get("losses")
 
     print("\nUID type is:", type(uid)) # Debug
-    print("UID Value is:", uid)
+    print("UID Value is:", uid) # Debug
     
     # Create a new connection and session
     Base.metadata.create_all(bind=engine)
@@ -371,6 +377,7 @@ def add_player():
       wins = int(wins)
       losses = int(losses)
     except:
+      # Catches errors
       print("Error: Cannot convert value to integer")
       return redirect(url_for("error_page", error = "Error: Expected number input"))
 
@@ -428,13 +435,13 @@ def add_team():
       print("Error: Cannot convert value to integer")
       return redirect(url_for("error_page", error = "Error: Expected number input"))
 
+    # Tests the data inputs
     testteam = [uid, name, rank, points, games_played, wins, losses, gender]
     for i in testteam:
       if teststupidinput(i) != True:
         return redirect(url_for("error_page", error = teststupidinput(i)))
     print("No errors found in teststupidinput") # Debug
     
-    # Create a team object
     if testcreation(uid, 0, 1, uid, games_played, wins, losses): # Tests inputs
       t = Team(uid, name, rank, points, games_played, wins, losses, gender)
       # Add to the database
@@ -654,6 +661,7 @@ def update_team(ids):
         session.commit() # Saves changes
         return redirect(url_for('teams', page_title="TEAMS ")) # Redirects to teams page so user can see changes
       else:
+        print("Hmmm something happend")
         return redirect(url_for("error_page", error = testTeamUpdate(new_uid, uid, new_gender, new_games_played, new_losses, new_wins)))
       
     elif request.form['edit_button'] =="Delete":# Delete the player
