@@ -10,7 +10,7 @@ Base = declarative_base()
 
 #====================== Team Class ======================
 class Team(Base):
-  """ Creates team object with values uid, name, rank, points, games_played, wins, losses, gender """
+  """ Creates team object in the database with values uid, name, rank, points, games_played, wins, losses, gender. Also returns these values when called """
   __tablename__ = "teams" # Creates SQL Table
 
   # Create Table Columns
@@ -65,7 +65,8 @@ class Team(Base):
 
 #====================== Player ======================
 class Player(Base):
-  """ Creates player object with values uid, firstname, lastname, teamuid, number, points, games_played, wins, losses """
+  """ Creates player object in the database with values uid, firstname, lastname, teamuid, number, points, games_played, wins, losses. Also returns these values when called
+  """
   __tablename__ = "players" # Creates SQL Table
 
   # Create Table Columns
@@ -173,7 +174,8 @@ else:    # Database does not exist
   
 #====================== Testing ======================
 def testexists(uid, player=0, team=0):
-  """ Tests if player or team exists from given uid """
+  """ Tests if player or team exists from given uid and raises an error if it doesn't
+  """
   print("Testing if exists") # Debug
   if player == 1 and team == 0: # Checks for players
     print("Checking Player") # Debug
@@ -198,7 +200,8 @@ def testexists(uid, player=0, team=0):
     return "Error: Unexpected input in program" # Catches if I did something wrong
 
 def testcreation(uid, player=0, team=0, teamuid=0, games_played=0, wins=0, losses=0):
-  """ Tests if player or team should be created or not from given inputs """
+  """ Tests if player or team already exists and if the games played is less than the win + losses makes sense. If not it will raise an error 
+  """
   print("Testing Creation")
   if player == 1 and team == 0:
     try: # Checks for players
@@ -242,7 +245,8 @@ def testcreation(uid, player=0, team=0, teamuid=0, games_played=0, wins=0, losse
     return "Error: unexpected input"
 
 def testTeamUpdate(new_uid, uid, gender, games_played, losses, wins):
-  """ Tests if the team updates are valid """
+  """ Tests if the team updates are valid by checking if the gender is F or M, if the UID has been changed and if it has, is it already in use, and the games played is less than the losses + wins
+  """
   if gender.upper() != "F" and gender.upper() != "M":
     return "Error: Gender must be F or M"
   else:
@@ -262,7 +266,8 @@ def testTeamUpdate(new_uid, uid, gender, games_played, losses, wins):
       return True
 
 def testPlayerUpdate(new_uid, uid, team, games_played, losses, wins):
-  """ Tests player update changes """
+  """ Tests player update by checking if the UID has been changed, and if it has, is the new UID already in use, if the games played is less than the wins + losses, and if the players team exists
+  """
   if int(new_uid) != int(uid):
     print(new_uid, uid)
     try:
@@ -284,7 +289,8 @@ def testPlayerUpdate(new_uid, uid, team, games_played, losses, wins):
     return "Error: Player's team does not exist"
 
 def teststupidinput(input):
-  """ Tests for ridiculous inputs """
+  """ Tests for ridiculous inputs such as empty inputs, negative or too large numbers. Raises an error if any of these are true
+  """
   if not input:
     return "Error: Value is empty"
   try:
@@ -306,6 +312,8 @@ app = Flask(__name__) # Loads Flask app
 
 @app.route('/')    # Route to Homepage
 def root():
+  """ Homepage for the website, displays the male teams and players, and female teams and players in a read-able list
+  """  
   # Connects to database
   Session = sessionmaker(bind=engine)
   session = Session()
@@ -323,6 +331,8 @@ def root():
 #====================== Teams ======================
 @app.route('/teams')    # Route to Team Page
 def teams():
+  """ Displays all the teams and their important stats in a column to themselves
+  """
   # Connects to database
   Session = sessionmaker(bind=engine)
   session = Session()
@@ -336,6 +346,8 @@ def teams():
 #====================== Players ======================
 @app.route('/players')    # Route to Players Page
 def players():
+  """ Displays all the players and their important stats in a column to themselves
+  """
   # Connects to database
   Session = sessionmaker(bind=engine)
   session = Session()
@@ -349,6 +361,8 @@ def players():
 #====================== Add Player ======================
 @app.route('/add_player', methods=['POST', 'GET'])    # Route to Add Player Page
 def add_player():
+  """ Displays a form containing all the neccesary player inputs to add a new player. All inputs will be tested by teststupidinput() and testplayer(), and if no errors are found the new player will be created in the database
+  """
   if request.method == "POST":
     # Gets form inputs
     uid = request.form.get("uid")
@@ -406,6 +420,8 @@ def add_player():
 #====================== Add Team ======================
 @app.route('/add_team', methods=['POST', 'GET'])    # Route to Add Team Page
 def add_team():
+  """Displays a form containing all the neccesary team inputs to add a new team. All inputs will be tested by teststupidinput() and testteam(), and if no errors are found the new team will be created in the database
+  """
   if request.method == "POST":
     # Gets form inputs
     uid = request.form.get("uid")
@@ -453,6 +469,9 @@ def add_team():
 #====================== Edit Player ======================
 @app.route('/edit_player', methods=['POST', 'GET'])    # Route to edit page
 def edit_player():
+  """ Creates a dropdown menu and input box with all the players, allows the user to select a player from the list or input with UID and update the selected player.
+  """
+
   # Get Players
   Session = sessionmaker(bind=engine)
   session = Session()
@@ -490,6 +509,8 @@ def edit_player():
 #====================== Edit Team ======================
 @app.route('/edit_team', methods=['POST', 'GET'])    # Route to edit page
 def edit_team():
+  """ Creates a dropdown menu and input box with all the teams, allows the user to select a team from the list or input with UID and update the selected team.
+  """
   # Connects to database
   Session = sessionmaker(bind=engine)
   session = Session()
@@ -519,6 +540,8 @@ def edit_team():
 #====================== Update Player ======================
 @app.route('/update_player/<ids>', methods=['POST', 'GET'])    # Route to Upade Player
 def update_player(ids):
+  """ Displays a form containing all the neccesary player inputs to add edit a player. All inputs will be tested by teststupidinput() and testplayer(), and if no errors are found the changes made to the player will be updated to the database
+  """
   print("Selected Player to update is:", ids) # Debug
 
   # Connects to database
@@ -598,6 +621,8 @@ def update_player(ids):
 #====================== Update Team ======================
 @app.route('/update_team/<ids>', methods=['POST', 'GET'])    # Route to update Team
 def update_team(ids):
+  """ Displays a form containing all the neccesary team inputs to add edit a team. All inputs will be tested by teststupidinput() and testteam(), and if no errors are found the changes made to the team will be updated to the database
+  """
   print(ids) # Debug
 
   # Connects to database
@@ -678,11 +703,13 @@ def update_team(ids):
 
 #====================== Error Page ======================
 @app.route('/error_page/<error>', methods=['POST', 'GET'])
-def error_page(error="IDK what just happened"):
+def error_page(error="Unexpected error: Please try again."):
+  """ Prints any errors found in the testing functions, if none are given will print unexpected error. 
+  """
   error = [error]
-  print("Error is:", error)
+  print("Error is:", error)    
   return render_template("error.html", page_title="Error", errors = error)
 
 if __name__ == "__main__":    # Starts App
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=8080)
 
