@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<br>
+
+<!-- Prints Errors -->
+{% for i in errors %}
+  <p>{{i}}</p>
+{% endfor %}
+
+{% endblock %}

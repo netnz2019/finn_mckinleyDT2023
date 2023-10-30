@@ -3,12 +3,13 @@
 </br></br>
 
 
-<!-- Player search -->
+<!-- Provides instructions -->
 <p>Search for your person by entering their unique uid. Then edit the details and save or delete the entry.</p>
 
+<!-- Creates form -->
 <form action="{{ url_for("edit_player")}}" method="post">
 
-<!-- Gets input players -->
+<!-- Gets players from database -->
 <label for="uid">UID:</label>
 <input class="dropdownselect" type="number" list="playerlist" id="player" name="player">
 
@@ -26,14 +27,15 @@
 <button type="submit" name="edit_button" value="add">Add Player</button>
 </form>
 
-
-</br></br></br>
 <!-- Team search -->
+</br></br></br>
+<!-- Provides instructions -->
 <p>Search for team by entering team name</p>
 
+<!-- Creates form -->
 <form action="{{ url_for("edit_team")}}" method="post">
 
-<!-- Gets input players -->
+<!-- Gets teams from database -->
 <label for="uid">UID:</label>
 <input class="dropdownselect" type="number" list="teamlist" id="team" name="team">
 

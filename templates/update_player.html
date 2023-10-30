@@ -9,16 +9,31 @@
 
 <!-- Displays input boxes -->
 <label for="uid">UID:</label>
-<input type="text" id="uid" name="uid" placeholder="UID" value="{{ids}}"> </br>
+<input type="number" id="uid" name="uid" placeholder="Eg. 4" value="{{ids}}"> </br>
   
 <label for="firstname">First Name:</label>
-<input type="text" id="firstname" name="fname" placeholder="firstname" value = "{{Fname}}"> </br>
+<input type="text" id="firstname" name="fname" placeholder="Eg. Ralph" value = "{{Fname}}"> </br>
 
 <label for="lastname">Last Name:</label>
-<input type="text" id="lastname" name="lname" placeholder="lastname" value={{Lname}}></br>
+<input type="text" id="lastname" name="lname" placeholder="Eg. Henderson" value={{Lname}}></br>
+
+<label for="team">Team UID:</label>
+<input type="number" id="team" name="team" placeholder="Eg. 2" value={{Team}}>  </br>
+
+<label for="number">Number:</label>
+<input type="number" id="number" name="number" placeholder="Eg. 5" value={{Number}}>  </br>
 
 <label for="points">Points:</label>
-<input type="text" id="points" name="points" placeholder="points" value={{Points}}>  </br></br>
+<input type="number" id="points" name="points" placeholder="50" value={{Points}}>  </br>
+
+<label for="games_played">Games Played:</label>
+<input type="number" id="games_played" name="games_played" placeholder="Eg. 3" value={{Games_played}}>  </br>
+
+<label for="losses">Losses:</label>
+<input type="number" id="losses" name="losses" placeholder="Eg. 0" value={{Losses}}>  </br>
+
+<label for="wins">Wins:</label>
+<input type="number" id="wins" name="wins" placeholder="Eg. 3" value={{Wins}}>  </br></br>
 
 <!-- Saves changes -->
 <button type="submit" name="edit_button" value="Save">Save</button></br>
